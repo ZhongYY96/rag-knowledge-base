@@ -33,6 +33,7 @@ npm run dev     # 3. 启动 → http://localhost:3000
 ```
 
 懒人版：`npm run up` = `setup` + `dev` 一条命令。
+生产模式：`npm run serve`（= `next build && next start`），建议先用 `npm run setup` 自检。
 
 首次使用：打开 `/register` 注册 → 建知识库 → 上传 md/txt/pdf → 进对话页提问。
 

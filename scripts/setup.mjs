@@ -119,6 +119,14 @@ async function checkServices() {
   fatal.push('services');
 }
 
+async function checkPort() {
+  const busy = await tcp('127.0.0.1', 3000, 600);
+  if (busy) {
+    WARN('端口 3000 已被占用（可能已有一个实例在跑）');
+    INFO('先停掉旧进程，或启动时换端口：npx next dev -p 3001');
+  } else OK('端口 3000 空闲');
+}
+
 async function checkModels() {
   const targets = [
     ['对话模型', process.env.OPENAI_BASE_URL || 'http://127.0.0.1:8000/v1'],
@@ -160,5 +168,6 @@ checkNode();
 bootstrapEnv();
 checkDeps();
 await checkServices();
+await checkPort();
 await checkModels();
 summary();
