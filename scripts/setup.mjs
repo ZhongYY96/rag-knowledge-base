@@ -82,7 +82,23 @@ async function checkServices() {
   if (qdrantUp) OK(`Qdrant 可连接 ${qdrant.host}:${qdrant.port}`);
   else WARN(`Qdrant 连不上 ${qdrant.host}:${qdrant.port}`);
 
-  if (redisUp && qdrantUp) return;
+  if (redisUp && qdrantUp) {
+    // 端口通了不代表"是你的数据"：同一个 compose 文件在两个目录各起一套时，
+    // 只有一个能绑 6379/6333，另一个实例会读到对方的数据卷。
+    const ps = spawnSync('docker', ['ps', '--format', '{{.Names}}\t{{.Label "com.docker.compose.project"}}'], { encoding: 'utf8' });
+    const project = path.basename(ROOT);
+    const foreign = (ps.stdout || '')
+      .split('\n')
+      .filter(Boolean)
+      .map((l) => l.split('\t'))
+      .filter(([name, proj]) => proj && proj !== project && /(redis|qdrant)/i.test(name));
+    if (foreign.length) {
+      WARN(`端口上的容器属于其他项目：${foreign.map(([n, p]) => `${n}(${p})`).join(', ')}`);
+      INFO('如果你在另一个目录也跑过本项目，数据卷是不同的——这里看到的数据可能不是本目录的。');
+      INFO('切换目录前先停掉对方：在它的目录里执行 docker compose down');
+    }
+    return;
+  }
 
   const docker = spawnSync('docker', ['--version'], { encoding: 'utf8' });
   if (docker.status !== 0) {
