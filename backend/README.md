@@ -90,13 +90,3 @@ fetch(`${COST_API}/v1/calls`, { method: 'POST', body: JSON.stringify({
   timings: { retrieval_ms, ttft_ms, latency_ms },
 }) }).catch(() => {});
 ```
-
-## 设计取舍
-
-| 决策 | 原因 |
-|---|---|
-| 服务端裁决、客户端执行 | 服务端不知道业务侧模型清单与降级关系，也不该知道 |
-| 明细存 SQLite | 需要按租户/模型/天聚合；JSONL 全扫撑不住 |
-| 成本用微美元整数 | 浮点累加会让"已花 0.99"变成 1.0000001，误触发 BLOCK |
-| `request_id` 主键去重 | 重试不重复计费 |
-| 预检 fail-open | 观测不能成为可用性瓶颈 |
