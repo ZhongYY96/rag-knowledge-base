@@ -95,8 +95,8 @@ export default function Sidebar() {
         <p className="truncate text-sm text-gray-700">{user?.name || user?.email || '…'}</p>
         <p className="truncate text-xs text-gray-400">{user?.email}</p>
         <div className="flex flex-col items-start gap-1 pt-1">
+          {/* 「全部设备退出」已从界面移除：能力仍在 POST /api/auth/logout?all=1 */}
           <LogoutButton />
-          <LogoutButton all />
         </div>
       </div>
     </div>
