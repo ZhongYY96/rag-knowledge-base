@@ -11,7 +11,10 @@
     "eval": "node scripts/eval.mjs",
     "reindex": "node scripts/reindex.mjs",
     "test:auth": "node scripts/test-auth.mjs",
-    "migrate:kb": "node scripts/migrate-kb-owner.mjs"
+    "migrate:kb": "node scripts/migrate-kb-owner.mjs",
+    "setup": "node scripts/setup.mjs",
+    "up": "node scripts/setup.mjs && next dev",
+    "serve": "next build && next start"
   },
   "dependencies": {
     "@ai-sdk/openai": "1.3.22",
