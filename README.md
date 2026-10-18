@@ -5,6 +5,28 @@
 一条可跑通的完整链路：**认证 → 私有知识库 → 文档入库 → 混合检索 → 流式问答（带引用）→ 评测 → 审计**。
 模型可完全本地化（llama.cpp + bge-m3），也可指向任意 OpenAI 兼容端点。
 
+![知识库问答：引用角标与来源卡片](docs/images/06-chat.png)
+
+## 界面
+
+**对话页 —— 引用角标可点击，来源可展开、可定位原文**
+
+| 回答里的引用角标 | 展开查看被引用的原文 |
+|---|---|
+| ![对话页](docs/images/06-chat.png) | ![展开引用](docs/images/07-citation-expanded.png) |
+
+| 定位到原文并高亮 | 质量报告与评测 |
+|---|---|
+| ![原文定位](docs/images/08-source-preview.png) | ![质量报告](docs/images/05-eval-progress.png) |
+
+| 工作台 | 知识库列表 |
+|---|---|
+| ![工作台](docs/images/01-dashboard.png) | ![知识库](docs/images/02-knowledge-bases.png) |
+
+| 知识库详情：文档与评测入口 |
+|---|
+| ![知识库详情](docs/images/03-kb-detail.png) |
+
 ## 亮点
 
 **① 引用可溯源，不只是"贴个来源"**
@@ -73,6 +95,8 @@ npm run dev     # 3. 启动 → http://localhost:3000
 | hybrid 0.7:0.3 | 100% | 87.5% | — | — |
 
 混合检索在本语料下掉召回，因此**默认关闭、保留开关**。判定口径见 `docs/eval-spec.md`。
+
+![评测进行中](docs/images/04-eval-start.png)
 
 ## 目录
 
