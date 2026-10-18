@@ -100,7 +100,16 @@ async function checkServices() {
   }
   if (up.status !== 0) {
     BAD('docker compose 启动失败');
-    INFO('常见原因：端口被占用（6379/6333）、Docker 未启动');
+    const err = `${up.stderr ?? ''}${up.stdout ?? ''}`;
+    if (/already in use/i.test(err)) {
+      INFO('容器名被占用：多半是另一份项目目录的容器还留着');
+      INFO('解决：docker ps -a --filter "name=rag" 找到后 docker rm <名字>，再重跑');
+    } else if (/port is already allocated|address already in use/i.test(err)) {
+      INFO('端口被占用：先停掉另一个正在跑的实例（docker compose down）');
+    } else {
+      INFO('常见原因：Docker 没启动、端口占用（6379/6333）');
+      INFO('看详细日志：docker compose logs redis qdrant');
+    }
     fatal.push('services');
     return;
   }
