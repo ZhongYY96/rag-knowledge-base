@@ -12,7 +12,7 @@ import { requireKb } from '@/lib/auth/kbAccess';
 import DeleteButton from './DeleteButton';
 import DocumentList from './DocumentList';
 import EvalPanel from './EvalPanel';
-import { latestReport, loadGolden } from '@/lib/rag/eval';
+import { latestReport } from '@/lib/rag/eval';
 import { getGolden } from '@/lib/rag/goldenStore';
 import { getCollectionKind } from '@/lib/vectorStore';
 
@@ -44,8 +44,9 @@ export default async function KnowledgeBasePage({ params }) {
   const evalReport = await latestReport(fullId);
   // 当前生效的测试集：优先上传的，否则内置示例
   const uploadedGolden = await getGolden(fullId);
-  const goldenCount = uploadedGolden ? uploadedGolden.length : (await loadGolden()).length;
-  const goldenSource = uploadedGolden ? 'uploaded' : 'builtin';
+  // 测试集属于知识库：没导入就是 0 条，不回落到仓库内置示例
+  const goldenCount = uploadedGolden ? uploadedGolden.length : 0;
+  const goldenSource = uploadedGolden ? 'uploaded' : 'none';
   // 这个库的索引形态：hybrid（dense+sparse）还是 legacy（单路向量）
   const collectionKind = await getCollectionKind(fullId);
   

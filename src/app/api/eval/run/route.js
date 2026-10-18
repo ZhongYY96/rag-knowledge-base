@@ -9,6 +9,7 @@ import { getVectorStore } from '@/lib/vectorStore';
 import { judgeRetrieval, summarize, saveReport } from '@/lib/rag/eval';
 import { resolveCases, runFullEval, getJob } from '@/lib/rag/evalJob';
 import { audit, clientIp } from '@/lib/audit';
+import { getGolden } from '@/lib/rag/goldenStore';
 
 export const dynamic = 'force-dynamic';
 // 完整评测要调模型，给足时间（仅自托管 Node 有效；Vercel 上要配 maxDuration）
@@ -32,6 +33,12 @@ export async function POST(request) {
 
     if (!knowledgeBaseId) throw new HttpError(400, '缺少 knowledgeBaseId');
     const { kb } = await requireKb(knowledgeBaseId, user.id, 'viewer');
+
+    // 测试集属于知识库：没有导入就不评测（CLI 仍可用仓库自带题集）
+    const golden = await getGolden(knowledgeBaseId);
+    if (!golden || golden.length === 0) {
+      throw new HttpError(400, '这个知识库还没有测试集，请先导入后再评测');
+    }
 
     // ── 完整评测：起后台任务，立刻返回 ──
     if (mode === 'full') {

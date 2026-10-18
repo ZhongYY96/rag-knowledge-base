@@ -205,9 +205,9 @@ export default function EvalPanel({ knowledgeBaseId, initialReport, goldenCount,
             ) : (
               <span
                 className="ml-1 rounded bg-gray-100 px-1.5 py-0.5 text-[11px] text-gray-500"
-                title="仓库自带的基础题集（eval/golden.jsonl），所有知识库共用；导入自己的测试集后会替换"
+                title="还没有测试集；点「模板」下载格式，填好后用「导入测试集」上传"
               >
-                内置示例
+                未导入
               </span>
             )}
           </span>
@@ -245,9 +245,9 @@ export default function EvalPanel({ knowledgeBaseId, initialReport, goldenCount,
           <button
             type="button"
             onClick={quickRun}
-            disabled={busy !== ''}
+            disabled={busy !== '' || golden.count === 0}
             className="flex items-center rounded-md border border-gray-300 px-2.5 py-1.5 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-            title="只跑检索层，1 秒返回"
+            title={golden.count === 0 ? '先导入测试集才能评测' : '只跑检索层，1 秒返回'}
           >
             <RefreshCw size={14} className={`mr-1.5 ${busy === 'quick' ? 'animate-spin' : ''}`} />
             {busy === 'quick' ? '检查中…' : '快速检查'}
@@ -256,9 +256,13 @@ export default function EvalPanel({ knowledgeBaseId, initialReport, goldenCount,
           <button
             type="button"
             onClick={fullRun}
-            disabled={busy !== ''}
+            disabled={busy !== '' || golden.count === 0}
             className="flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700 disabled:opacity-50"
-            title="检索 + 生成，含引用正确率/拒答率，耗时较长"
+            title={
+              golden.count === 0
+                ? '先导入测试集才能评测'
+                : '检索 + 生成，含引用正确率/拒答率，耗时较长'
+            }
           >
             <Play size={14} className="mr-1.5" />
             {running ? '评测中…' : '完整评测'}
@@ -292,7 +296,7 @@ export default function EvalPanel({ knowledgeBaseId, initialReport, goldenCount,
 
         {!report ? (
           <p className="text-sm text-gray-500">
-            还没有评测数据。当前用的是内置示例题集，「快速检查」只跑检索层（1 秒），「完整评测」会调用模型并给出引用正确率与拒答率（较慢）。
+            这个知识库还没有测试集。先点「模板」下载格式，按格式填好后「导入测试集」；导入后即可跑「快速检查」或「完整评测」。
           </p>
         ) : (
           <>
