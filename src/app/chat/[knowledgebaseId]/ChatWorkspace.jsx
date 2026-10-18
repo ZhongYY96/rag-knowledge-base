@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Loader2, Plus, SendIcon, Trash2 } from 'lucide-react';
 import CitationText from '@/components/chat/CitationText';
 import SourceList from '@/components/chat/SourceList';
+import CopyButton from '@/components/chat/CopyButton';
 
 /**
  * 对话工作区（客户端）。
@@ -304,9 +305,15 @@ export default function ChatWorkspace({
               <div className="space-y-5">
                 {messages.map((m) =>
                   m.role === 'user' ? (
-                    <div key={m.id} className="flex justify-end">
-                      <div className="max-w-[80%] whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-blue-600 px-4 py-2.5 text-[15px] leading-7 text-white shadow-sm">
-                        {m.content}
+                    <div key={m.id} className="group flex justify-end">
+                      <div className="flex flex-col items-end gap-1">
+                        <div className="max-w-[80%] whitespace-pre-wrap break-words rounded-2xl rounded-br-md bg-blue-600 px-4 py-2.5 text-[15px] leading-7 text-white shadow-sm">
+                          {m.content}
+                        </div>
+                        <CopyButton
+                          text={m.content}
+                          className="opacity-0 transition-opacity group-hover:opacity-100"
+                        />
                       </div>
                     </div>
                   ) : (
@@ -314,7 +321,13 @@ export default function ChatWorkspace({
                       <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-600 text-[11px] font-medium text-white">
                         AI
                       </div>
-                      <div className="min-w-0 flex-1 rounded-2xl rounded-tl-md border border-gray-200 bg-white px-4 py-3 shadow-sm">
+                      <div className="group min-w-0 flex-1 rounded-2xl rounded-tl-md border border-gray-200 bg-white px-4 py-3 shadow-sm">
+                        <div className="mb-1 flex justify-end">
+                          <CopyButton
+                            text={m.content}
+                            className="opacity-0 transition-opacity group-hover:opacity-100"
+                          />
+                        </div>
                         <CitationText
                           text={m.content}
                           sourceCount={m.sources?.length ?? 0}
