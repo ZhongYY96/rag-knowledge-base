@@ -29,7 +29,7 @@ const DEFAULTS = () => ({
 
   // ── RAG 检索参数 ──
   // 默认值与改造前写死的值完全一致（5 / 400 / 100 / 不过滤 / 开改写）
-  ragTopK: 5, // 每次召回几块
+  ragTopK: 3, // 每次召回几块
   ragChunkSize: 400, // 切分块大小（字符）
   ragChunkOverlap: 100, // 块间重叠，避免答案被切在边界
   ragScoreThreshold: 0, // 相似度低于它就丢弃；0 = 不启用
