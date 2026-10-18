@@ -5,7 +5,7 @@
 设计要点见 backend/README.md：
   · 全部对外接口只给服务端用（X-Internal-Token）
   · 预检 fail-open：本服务不可用时不能拖垮问答
-  · 计价复用 vendor/tokenwatch，存储与裁决自己实现
+  · 计价、存储、裁决分层，各自可替换
 """
 import sys
 from datetime import datetime, timedelta, timezone

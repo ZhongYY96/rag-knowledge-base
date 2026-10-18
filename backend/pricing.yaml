@@ -1,6 +1,5 @@
 # 计价表（USD / 1M tokens）
 #
-# 结构与 PacktPublishing/The-AI-Cost-Playbook 的 pricing.yaml 一致，复用其 TokenwatchConfig 解析。
 # 本项目的模型是本地部署，没有按 token 计费的真实账单，
 # 因此这里填的是「等效单价」——按公开 API 价格折算，用于横向对比，不是财务口径。
 

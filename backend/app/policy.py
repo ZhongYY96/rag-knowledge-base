@@ -1,12 +1,10 @@
-"""预算裁决：复用 vendor/tokenwatch 的 Budget / BudgetAction / BudgetCheckResult。
+"""预算裁决：把预算规则翻译成四级动作（WARN / THROTTLE / DOWNGRADE / BLOCK）。
 
-与 Packt 原实现的差别只有一处：
-  原实现把 current_spend 存在内存里（BudgetManager._refresh_budgets 从 store 反射），
-  这里改成每次从 SQLite 现算——多进程/多实例下不会各算各的。
+current_spend 每次都从 SQLite 现算，不做进程内缓存——多实例下各算各的会超支。
 """
 from datetime import datetime, timedelta, timezone
 
-from tokenwatch.governance import Budget, BudgetAction, BudgetCheckResult  # 复用
+from tokenwatch.governance import Budget, BudgetAction, BudgetCheckResult
 
 from . import repo
 from .settings import DOWNGRADE_TARGET

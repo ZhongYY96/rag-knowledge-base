@@ -1,8 +1,8 @@
 """存储层：SQLite（明细 + 预算）。
 
-为什么不用 vendored 的 tokenwatch.store.UsageStore：
-它把记录追加到 JSONL，查询要全文件扫描——无法支撑按租户/模型的聚合。
-这里保留其 UsageRecord 字段语义，换成带索引的表。
+为什么不用 JSONL 追加存储：
+按租户/模型做聚合时需要全文件扫描，数据一多就不可用。
+这里用带索引的表，字段与上报契约一一对应。
 """
 import json
 import sqlite3

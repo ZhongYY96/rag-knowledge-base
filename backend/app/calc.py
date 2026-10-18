@@ -1,7 +1,7 @@
-"""成本计算：复用 vendor/tokenwatch 的计价模型。
+"""成本计算：价格表驱动，结果统一为微美元整数。
 
 关键点：
-  · 价格来自 TokenwatchConfig（Packt 的 ModelPricing）
+  · 价格来自 pricing.yaml（按模型配置输入/输出单价）
   · 对外统一用「微美元整数」，避免浮点累加误差
 """
 import sys
@@ -11,7 +11,7 @@ _BACKEND = Path(__file__).resolve().parent.parent
 if str(_BACKEND / "vendor") not in sys.path:
     sys.path.insert(0, str(_BACKEND / "vendor"))
 
-from tokenwatch.config import TokenwatchConfig  # noqa: E402  复用 Packt 实现
+from tokenwatch.config import TokenwatchConfig  # noqa: E402
 
 from .settings import PRICING_PATH
 
