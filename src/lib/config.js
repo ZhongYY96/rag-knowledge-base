@@ -52,6 +52,14 @@ const REQUIRED_IN_PRODUCTION = ['REDIS_URL', 'QDRANT_URL', 'AUTH_SECRET'];
 export function assertConfig() {
   if (env.NODE_ENV !== 'production') return;
 
+  /*
+   * 构建阶段跳过校验。
+   * next build 会 import 每个 route 来收集页面数据，此时也会执行到这里；
+   * 但构建机器通常没有运行时的 .env（尤其是 CI / 新克隆的仓库），
+   * 在这里抛错会把"能构建"变成"必须先配好数据库才能构建"，顺序反了。
+   */
+  if (env.NEXT_PHASE === 'phase-production-build') return;
+
   const missing = REQUIRED_IN_PRODUCTION.filter((k) => !env[k]);
   if (missing.length) {
     throw new Error(
@@ -78,6 +86,7 @@ export function describeConfig() {
 let logged = false;
 export function logConfigOnce() {
   if (logged) return;
+  if (env.NEXT_PHASE === 'phase-production-build') return;
   logged = true;
   console.log('[config]', describeConfig());
 }
