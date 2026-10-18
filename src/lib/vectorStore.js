@@ -35,6 +35,9 @@ export const qdrant =
   new QdrantClient({
     url: QDRANT_URL,
     ...(QDRANT_API_KEY ? { apiKey: QDRANT_API_KEY } : {}),
+    // 不在导入时探测服务端版本：构建阶段/离线环境会刷一堆
+    // "Failed to obtain server version" 警告
+    checkCompatibility: false,
   });
 
 if (process.env.NODE_ENV !== 'production') {
