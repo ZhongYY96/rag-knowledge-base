@@ -7,26 +7,6 @@
 
 ![知识库问答：引用角标与来源卡片](docs/images/06-chat.png)
 
-## 界面
-
-**对话页 —— 引用角标可点击，来源可展开、可定位原文**
-
-| 回答里的引用角标 | 展开查看被引用的原文 |
-|---|---|
-| ![对话页](docs/images/06-chat.png) | ![展开引用](docs/images/07-citation-expanded.png) |
-
-| 定位到原文并高亮 | 质量报告与评测 |
-|---|---|
-| ![原文定位](docs/images/08-source-preview.png) | ![质量报告](docs/images/05-eval-progress.png) |
-
-| 工作台 | 知识库列表 |
-|---|---|
-| ![工作台](docs/images/01-dashboard.png) | ![知识库](docs/images/02-knowledge-bases.png) |
-
-| 知识库详情：文档与评测入口 |
-|---|
-| ![知识库详情](docs/images/03-kb-detail.png) |
-
 ## 亮点
 
 **① 引用可溯源，不只是"贴个来源"**
@@ -57,6 +37,26 @@
 - JWT + httpOnly Cookie，密码 scrypt；越权访问统一返回 **404**（防 ID 枚举）
 - 审计日志：统一入口埋点（含越权探测），敏感字段写入即脱敏，可按操作/知识库过滤
 - 一键部署自检、备份脚本、配置集中校验（生产缺变量直接启动失败）
+
+## 界面
+
+**对话页 —— 引用角标可点击，来源可展开、可定位原文**
+
+| 回答里的引用角标 | 展开查看被引用的原文 |
+|---|---|
+| ![对话页](docs/images/06-chat.png) | ![展开引用](docs/images/07-citation-expanded.png) |
+
+| 定位到原文并高亮 | 质量报告与评测 |
+|---|---|
+| ![原文定位](docs/images/08-source-preview.png) | ![质量报告](docs/images/05-eval-progress.png) |
+
+| 工作台 | 知识库列表 |
+|---|---|
+| ![工作台](docs/images/01-dashboard.png) | ![知识库](docs/images/02-knowledge-bases.png) |
+
+| 知识库详情：文档与评测入口 |
+|---|
+| ![知识库详情](docs/images/03-kb-detail.png) |
 
 ## 三步跑起来
 
