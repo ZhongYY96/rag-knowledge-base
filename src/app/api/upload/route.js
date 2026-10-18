@@ -178,6 +178,6 @@ export async function POST(request, { params }) {
       count: uploadedDocs.length,
     });
   } catch (error) {
-    return toResponse(error, 'Failed to upload documents');
+    return toResponse(error, '上传失败');
   }
 }

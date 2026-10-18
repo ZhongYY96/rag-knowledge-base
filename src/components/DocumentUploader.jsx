@@ -76,7 +76,7 @@ export default function DocumentUploader({ knowledgeBaseId, onUploadSuccess }) {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Failed to upload documents');
+        throw new Error(error.error || '上传失败，请重试');
       }
 
       const result = await response.json();
