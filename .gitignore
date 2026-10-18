@@ -1,0 +1,49 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# env（只提交 .env.example）
+.env
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# 用户上传的文档（内容，不入库）
+/uploads
+
+# 运行时生成
+/eval/reports/
+
+# 本地备份与临时脚手架
+/.auth-backup/
+/.eval-tmp/
+/.probe-tmp/
+/.reindex-tmp/
+/.clerk/

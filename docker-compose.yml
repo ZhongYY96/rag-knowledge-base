@@ -1,0 +1,28 @@
+# 方案 B：自建 Redis（元数据 + 限流）+ 自建 Qdrant（向量库）
+# 启动：docker compose up -d
+# 停止：docker compose down
+# 连数据一起清掉：docker compose down -v
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: rag-redis
+    ports:
+      - '6379:6379'
+    # appendonly 开启 AOF，重启不丢元数据
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: rag-qdrant
+    ports:
+      - '6333:6333' # REST（本项目的 @qdrant/js-client-rest 走这个）
+      - '6334:6334' # gRPC（本项目用不到，留着你以后调）
+    volumes:
+      - qdrant_data:/qdrant/storage
+
+volumes:
+  redis_data:
+  qdrant_data:

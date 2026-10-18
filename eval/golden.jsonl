@@ -1,0 +1,12 @@
+{"id":"q001","tier":"easy","question":"业务设备里 data_type=3 代表什么？","gold":[{"documentId":"","quote":"3 具体服务器（有 device_ip）"}],"must_contain":["服务器"],"should_refuse":false}
+{"id":"q002","tier":"easy","question":"网络设备里 data_type=1 代表什么？","gold":[{"documentId":"","quote":"1 机房"}],"must_contain":["机房"],"should_refuse":false}
+{"id":"q003","tier":"easy","question":"策略应该按什么键查？","gold":[{"documentId":"","quote":"按设备查（不用 IP）"}],"must_contain":[],"should_refuse":false}
+{"id":"q004","tier":"easy","question":"已经处理过的告警存在哪张表？","gold":[{"documentId":"","quote":"已处理（历史月表）"}],"must_contain":["历史月表"],"should_refuse":false}
+{"id":"q005","tier":"hard","question":"地市字段可以用来做过滤条件吗？","gold":[{"documentId":"","quote":"任何一层都不用它过滤"}],"must_contain":[],"should_refuse":false}
+{"id":"q006","tier":"hard","question":"网管数据的四层对象分别是什么？","gold":[{"documentId":"","quote":"① 指标层"},{"documentId":"","quote":"④ 告警层"}],"must_contain":["指标层","设备层","上报层","告警层"],"should_refuse":false}
+{"id":"q007","tier":"unanswerable","question":"这个系统的日活用户数是多少？","gold":[],"should_refuse":true}
+{"id":"q008","tier":"unanswerable","question":"2026 年第二季度的营收增长率是多少？","gold":[],"should_refuse":true}
+{"id":"q009","tier":"easy","question":"curalert 表存的是什么？","gold":[{"documentId":"","quote":"curalert / filealert"}],"must_contain":["告警"],"should_refuse":false}
+{"id":"q010","tier":"hard","question":"DevicePlugs 的 id 对应 StrategyDict 的哪个字段？","gold":[{"documentId":"","quote":"StrategyDict.device_id"}],"must_contain":["device_id"],"should_refuse":false}
+{"id":"q011","tier":"easy","question":"netdeviceplugs 的地址字段叫什么？","gold":[{"documentId":"","quote":"地址字段是 netdevice_ip"}],"must_contain":["netdevice_ip"],"should_refuse":false}
+{"id":"q012","tier":"hard","question":"已处理告警的历史月表怎么命名？","gold":[{"documentId":"","quote":"*AlertHis_YYYYMM"}],"must_contain":["AlertHis"],"should_refuse":false}
