@@ -1,0 +1,39 @@
+# 计价表（USD / 1M tokens）
+#
+# 结构与 PacktPublishing/The-AI-Cost-Playbook 的 pricing.yaml 一致，复用其 TokenwatchConfig 解析。
+# 本项目的模型是本地部署，没有按 token 计费的真实账单，
+# 因此这里填的是「等效单价」——按公开 API 价格折算，用于横向对比，不是财务口径。
+
+default_model: "MiniCPM5-2B"
+
+models:
+  # ── 本项目实际使用的本地模型（等效单价）──
+  - model_id: "MiniCPM5-2B"
+    provider: "local"
+    input_rate: 0.20
+    output_rate: 0.80
+    cached_rate: 0.02
+
+  - model_id: "Qwen2.5-7B-Instruct"
+    provider: "local"
+    input_rate: 0.40
+    output_rate: 1.20
+    cached_rate: 0.04
+
+  - model_id: "bge-m3"
+    provider: "local"
+    input_rate: 0.02
+    output_rate: 0.0
+
+  # ── 对照组：用于和商用模型比较成本量级 ──
+  - model_id: "gpt-4o-mini"
+    provider: "openai"
+    input_rate: 0.15
+    output_rate: 0.60
+    cached_rate: 0.075
+
+  - model_id: "claude-sonnet-4-20250514"
+    provider: "anthropic"
+    input_rate: 3.0
+    output_rate: 15.0
+    cached_rate: 0.30

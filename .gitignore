@@ -48,3 +48,8 @@ next-env.d.ts
 /.probe-tmp/
 /.reindex-tmp/
 /.clerk/
+
+# 成本服务（backend/）
+/backend/data/
+__pycache__/
+*.pyc
