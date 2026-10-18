@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import { PlusIcon } from 'lucide-react';
 import { listKnowledgeBasesForUser } from '@/lib/database';
-import { requireUser } from '@/lib/auth/session';
+import { requirePageUser } from '@/lib/auth/pageGuard';
 import { formatDate } from '@/lib/format';
 
 export default async function KnowledgeBasePage() {
   // 只列「我能看到的」：自己创建的 + 被共享的
-  const user = await requireUser();
+  const user = await requirePageUser('/knowledgebase');
   const knowledgebases = await listKnowledgeBasesForUser(user.id);
 
   return (

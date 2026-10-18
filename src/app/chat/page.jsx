@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { ArrowRight, Database, PlusIcon } from 'lucide-react';
-import { requireUser } from '@/lib/auth/session';
+import { requirePageUser } from '@/lib/auth/pageGuard';
 import { listKnowledgeBasesForUser } from '@/lib/database';
 
 /**
@@ -23,7 +23,7 @@ const ROLE = {
 };
 
 export default async function ChatIndexPage() {
-  const user = await requireUser();
+  const user = await requirePageUser('/chat');
   const knowledgebases = await listKnowledgeBasesForUser(user.id);
 
   // 只有一个库时没必要多一次点击

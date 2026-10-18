@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { PlusIcon, Database, Upload, MessageSquare, Info } from 'lucide-react';
 import { listKnowledgeBasesForUser, getChatSessionCount } from '@/lib/database';
-import { requireUser } from '@/lib/auth/session';
+import { requirePageUser } from '@/lib/auth/pageGuard';
 
 export default async function Dashboard() {
   /*
@@ -10,7 +10,7 @@ export default async function Dashboard() {
    * 全站数据、且不校验登录 —— 匿名用户能看到所有人的库（这就是
    * 「为什么没有登录」的现场）。
    */
-  const user = await requireUser();
+  const user = await requirePageUser('/dashboard');
   const knowledgebases = await listKnowledgeBasesForUser(user.id);
   const sessionCount = await getChatSessionCount(user.id);
 

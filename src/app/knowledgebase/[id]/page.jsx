@@ -7,7 +7,7 @@ import {
   Upload, 
   } from 'lucide-react';
 import { getDocumentsByKnowledgeBase } from '@/lib/database';
-import { requireUser } from '@/lib/auth/session';
+import { requirePageUser } from '@/lib/auth/pageGuard';
 import { requireKb } from '@/lib/auth/kbAccess';
 import DeleteButton from './DeleteButton';
 import DocumentList from './DocumentList';
@@ -21,7 +21,7 @@ export default async function KnowledgeBasePage({ params }) {
   const fullId = decodeURIComponent(id);
 
   // 鉴权：未登录 401；不是自己的库 → requireKb 抛 404 → 走下面的「不存在」
-  const user = await requireUser();
+  const user = await requirePageUser(`/knowledgebase/${fullId || ''}`);
   const access = await requireKb(fullId, user.id, 'viewer').catch(() => null);
   const knowledgeBase = access?.kb || null;
   if (!knowledgeBase) {
