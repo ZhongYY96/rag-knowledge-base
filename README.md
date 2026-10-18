@@ -109,6 +109,25 @@ cp -r backups/<时间戳>/uploads ./
 
 > `backups/` 已加入 `.gitignore`——里面有用户数据，不要提交。
 
+
+## 常见问题
+
+**页面没有样式 / 接口 500 / 报 `MODULE_NOT_FOUND .next/...manifest.json`**
+
+`next build` 和 `next dev` 不能同时跑——build 会把 dev 的 `.next` 覆盖成生产产物，CSS 清单丢失后页面就"裸奔"了。
+
+```bash
+pkill -f "next dev"; pkill -f "next-server"
+rm -rf .next
+npm run dev
+```
+
+自查：浏览器打开 `view-source:` 或执行 `curl -s localhost:3000/login | grep -o '/_next/static/css/[^"]*'`，没有输出就是样式没加载。
+
+**上传报"只支持 PDF / TXT / MD"**：DOCX 当前不支持（解析器不可靠），请另存为 PDF/TXT。
+
+**回答卡在"正在检索并生成…"**：模型没起或很慢；看 `docker compose ps` 与 `.env.local` 里的模型地址，或在页面点「取消」。
+
 ## 已知限制
 
 - 上传无大小/类型校验；API Key 明文存 Redis（生产应加密）
