@@ -81,7 +81,20 @@ async function runTurnInner({ sessionId, kbId, userId, startedAt }) {
     let sources = [];
 
     if (!docs.length) {
-      answer = '这个知识库里没有检索到相关内容。请确认文档已经上传，或者换一种问法。';
+      /*
+       * 空结果有两种完全不同的原因，提示必须区分开，
+       * 否则用户会一直"换问法"，而真正的问题是索引是空的。
+       */
+      let docCount = 0;
+      try {
+        const { getDocumentsByKnowledgeBase } = await import('@/lib/database');
+        const docs = await getDocumentsByKnowledgeBase(kbId);
+        docCount = Array.isArray(docs) ? docs.length : 0;
+      } catch {}
+
+      answer = docCount === 0
+        ? '这个知识库还没有上传文档。先上传 PDF / TXT / Markdown，再提问。'
+        : `这个知识库有 ${docCount} 个文档，但没有检索到向量内容（索引可能为空或正在建立）。可以到知识库详情页确认分块数，或用 scripts/reindex.mjs 重建索引。`;
       await appendDelta(sessionId, answer);
     } else {
       sources = docs.map(toSource);
