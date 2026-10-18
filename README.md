@@ -53,8 +53,7 @@ npm run dev     # 3. 启动 → http://localhost:3000
 
 ## 调用观测与成本（可选）
 
-`backend/` 是一个独立的 FastAPI 服务，负责**用量计量、成本归因与预算裁决**，计价与预算模型复用
-[The-AI-Cost-Playbook](https://github.com/PacktPublishing/The-AI-Cost-Playbook)（MIT，见 `backend/NOTICE.md`）。
+`backend/` 是一个独立的 FastAPI 服务，负责**用量计量、成本归因与预算裁决**。
 
 启用：
 
