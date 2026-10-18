@@ -4,27 +4,18 @@ FastAPI 实现，为 RAG 主应用提供**用量记录、成本归因、预算�
 
 > 它是 RAG 项目的平台层：主应用只负责问答，回答"花了多少钱、慢在哪一环、超预算怎么办"由本服务提供。
 
-## 与 Packt 仓库的关系
-
-代码基础是 [The-AI-Cost-Playbook](https://github.com/PacktPublishing/The-AI-Cost-Playbook)（MIT）：
-
-- `vendor/tokenwatch/`：**原样复用**其计价与预算领域模型
-- `app/`：重写存储、裁决与接口
-
-复用了什么、为什么改，见 [NOTICE.md](NOTICE.md)。
-
 ## 目录
 
 ```
 backend/
 ├── app/
 │   ├── main.py       FastAPI 路由
-│   ├── calc.py       计费（复用 tokenwatch.config.ModelPricing）
-│   ├── policy.py     预算裁决（复用 tokenwatch.governance）
-│   ├── repo.py       SQLite 存储（替换原 JSONL）
+│   ├── calc.py       计费（价格表 + 成本计算）
+│   ├── policy.py     预算裁决（分级动作）
+│   ├── repo.py       SQLite 存储（明细 + 聚合）
 │   ├── schemas.py    请求模型
 │   └── settings.py   环境变量
-├── vendor/tokenwatch/   复用的第三方代码 + LICENSE
+├── vendor/            第三方依赖代码 + LICENSE
 ├── pricing.yaml         计价表（含本地模型等效单价）
 └── data/cost.db         SQLite（gitignore）
 ```
