@@ -1,4 +1,5 @@
 import { QdrantClient } from '@qdrant/js-client-rest';
+import { config } from '@/lib/config';
 // ⚠️ 必须用 @langchain/community 里的这一个，不要装独立的 @langchain/qdrant：
 //    后者 1.x 的 peerDependency 是 @langchain/core ^1.1.47，
 //    而本项目锁在 @langchain/core 0.3.x（0.3.80），大版本不兼容。
@@ -24,8 +25,8 @@ import { toSparse, querySparse } from '@/lib/rag/lexical';
  * 旧库不会被自动改写：要么纯向量继续用，要么跑 scripts/reindex.mjs 重建。
  */
 
-const QDRANT_URL = process.env.QDRANT_URL || 'http://127.0.0.1:6333';
-const QDRANT_API_KEY = process.env.QDRANT_API_KEY || undefined;
+const QDRANT_URL = config.qdrant.url;
+const QDRANT_API_KEY = config.qdrant.apiKey || undefined;
 
 const globalForQdrant = globalThis;
 

@@ -11,6 +11,8 @@ services:
       - '6379:6379'
     # appendonly 开启 AOF，重启不丢元数据
     command: redis-server --appendonly yes
+    # 生产：把上面一行换成下面这行，并在 .env（不入库）里设置 REDIS_PASSWORD
+    # command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:?REDIS_PASSWORD required}
     volumes:
       - redis_data:/data
 
@@ -22,6 +24,9 @@ services:
       - '6334:6334' # gRPC（本项目用不到，留着你以后调）
     volumes:
       - qdrant_data:/qdrant/storage
+    # 生产：开启 API Key（与 .env 的 QDRANT_API_KEY 保持一致）
+    # environment:
+    #   QDRANT__SERVICE__API_KEY: ${QDRANT_API_KEY:?QDRANT_API_KEY required}
 
 volumes:
   redis_data:

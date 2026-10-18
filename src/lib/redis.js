@@ -1,4 +1,5 @@
 import Redis from 'ioredis';
+import { config, logConfigOnce, assertConfig } from '@/lib/config';
 
 /**
  * ioredis 单例。
@@ -9,9 +10,12 @@ import Redis from 'ioredis';
  */
 const globalForRedis = globalThis;
 
+assertConfig();
+logConfigOnce();
+
 export const redis =
   globalForRedis.__redis ??
-  new Redis(process.env.REDIS_URL || 'redis://127.0.0.1:6379', {
+  new Redis(config.redis.url, {
     // 单条命令最多重试 3 次，避免请求挂死
     maxRetriesPerRequest: 3,
     // 连不上时不要无限重连刷日志

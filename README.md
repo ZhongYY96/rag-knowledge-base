@@ -23,6 +23,44 @@ npm run dev     # http://localhost:3000
 
 首次访问 `/register` 注册，登录后建知识库、上传 md/txt/pdf，即可在 `/chat/<kbId>` 提问。
 
+
+## 配置与环境变量
+
+配置分两层，**不要混**：
+
+| 层 | 例子 | 存在哪 | 进 git 吗 |
+|---|---|---|---|
+| **连接信息**（密钥） | Redis URL/密码、Qdrant URL/API Key、AUTH_SECRET | 环境变量 | ❌ 只提交 `.env.example` 占位符 |
+| **业务参数** | 模型名与地址、topK、chunk 大小、检索模式 | Redis + `/settings` 页面 | —（运行时数据） |
+
+### 三个环境的存法
+
+```bash
+# 本地开发：.env.local（已被 .gitignore 忽略）
+cp .env.example .env.local
+
+# CI / 预发：平台 Secret 注入，不落文件
+#   GitHub Actions: secrets.REDIS_URL
+#   Vercel:        Project Settings → Environment Variables
+
+# 生产：密钥管理服务，随部署注入
+#   K8s:      kubectl create secret generic rag-env --from-env-file=.env.prod
+#   Compose:  docker compose --env-file .env.prod up -d
+```
+
+### 校验与脱敏
+
+`src/lib/config.js` 是唯一读取连接信息的地方：
+
+- **生产环境缺 `REDIS_URL` / `QDRANT_URL` / `AUTH_SECRET` 会直接启动失败**，不会静默回退到 `localhost`
+- 启动时打印一次脱敏地址，方便排查"连错库"：
+
+```
+[config] redis=redis://:***@10.0.0.5:6379 | qdrant=http://qdrant:6333 (apiKey 已设置) | llm=... 
+```
+
+- 前端只能看到 `NEXT_PUBLIC_*`，数据库配置**绝不能**加这个前缀
+
 ## 功能
 
 | 模块 | 说明 |
