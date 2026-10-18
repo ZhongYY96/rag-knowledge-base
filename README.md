@@ -111,17 +111,3 @@ npm run backup    # → backups/<时间戳>/{redis-dump.rdb, qdrant-*.snapshot, 
 ```
 
 数据在 docker volume 里：`docker compose down` 不影响，`down -v` 会清空。恢复步骤见脚本输出与 `docs/`。
-
-## 常见问题
-
-**页面没有样式 / 接口 500 / 报 `MODULE_NOT_FOUND .next/...manifest.json`**
-
-`next build` 与 `next dev` 不能同时跑（build 会覆盖 dev 的 `.next`）：
-
-```bash
-pkill -f "next dev"; pkill -f "next-server"
-rm -rf .next
-npm run dev
-```
-
-自查：`curl -s localhost:3000/login | grep -o '/_next/static/css/[^"]*'`，无输出即样式未加载。
