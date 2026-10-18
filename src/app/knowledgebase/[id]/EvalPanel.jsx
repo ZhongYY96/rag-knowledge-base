@@ -194,9 +194,21 @@ export default function EvalPanel({ knowledgeBaseId, initialReport, goldenCount,
 
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs text-gray-500">
-            测试集 {golden.count != null ? `${golden.count} 条` : '内置示例'}
-            {golden.source === 'uploaded' && (
-              <span className="ml-1 rounded bg-blue-50 px-1.5 py-0.5 text-[11px] text-blue-700">已上传</span>
+            测试集 {golden.count != null ? `${golden.count} 条` : '—'}
+            {golden.source === 'uploaded' ? (
+              <span
+                className="ml-1 rounded bg-blue-50 px-1.5 py-0.5 text-[11px] text-blue-700"
+                title="这个知识库自己上传的测试集"
+              >
+                本库上传
+              </span>
+            ) : (
+              <span
+                className="ml-1 rounded bg-gray-100 px-1.5 py-0.5 text-[11px] text-gray-500"
+                title="仓库自带的基础题集（eval/golden.jsonl），所有知识库共用；导入自己的测试集后会替换"
+              >
+                内置示例
+              </span>
             )}
           </span>
 
@@ -280,7 +292,7 @@ export default function EvalPanel({ knowledgeBaseId, initialReport, goldenCount,
 
         {!report ? (
           <p className="text-sm text-gray-500">
-            还没有评测数据。「快速检查」只跑检索层（1 秒），「完整评测」会调用模型、给出引用正确率与拒答率（较慢）。
+            还没有评测数据。当前用的是内置示例题集，「快速检查」只跑检索层（1 秒），「完整评测」会调用模型并给出引用正确率与拒答率（较慢）。
           </p>
         ) : (
           <>
