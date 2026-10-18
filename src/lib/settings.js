@@ -33,7 +33,8 @@ const DEFAULTS = () => ({
   ragChunkSize: 400, // 切分块大小（字符）
   ragChunkOverlap: 100, // 块间重叠，避免答案被切在边界
   ragScoreThreshold: 0, // 相似度低于它就丢弃；0 = 不启用
-  ragQueryRewrite: 1, // 追问是否先改写成独立问题（1 开 / 0 关）
+  // 本地小模型改写收益低，且要多跑一次 LLM；需要时在设置页打开
+  ragQueryRewrite: 0, // 追问是否先改写成独立问题（1 开 / 0 关）
 
   // ── 混合检索策略 ──
   // 默认 dense：当前语料（2 篇 / 46 块）实测 hybrid 在 hard 档掉召回（100% → 87.5%），

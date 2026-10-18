@@ -19,7 +19,7 @@ import { ANSWER_SYSTEM_PROMPT, formatContext } from '@/lib/rag/prompt';
  *   · 流式：token 不推向响应体（那时已经关了），而是写进 Redis Stream
  *   · 观看：浏览器另开 SSE 从 Stream 回放 + 追尾，断开不影响任务
  */
-const TURN_TIMEOUT_MS = 120_000;
+const TURN_TIMEOUT_MS = 240_000;
 
 export async function runSessionTurn({ sessionId, kbId, userId }) {
   const startedAt = Date.now();

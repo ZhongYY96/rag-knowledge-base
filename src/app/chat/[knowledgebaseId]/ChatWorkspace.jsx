@@ -35,6 +35,9 @@ export default function ChatWorkspace({
   const scrollRef = useRef(null);
   // 流式增量（SSE 推来的、还没落库的部分）
   const [streamText, setStreamText] = useState('');
+  // 用 ref 累积、rAF 合并刷新：每个 delta 都 setState 会让整页跟着重渲染
+  const streamBuf = useRef('');
+  const rafRef = useRef(null);
 
   const running = job?.status === 'running';
 
@@ -68,6 +71,7 @@ export default function ChatWorkspace({
   function startStream(id) {
     esRef.current?.close();
     clearInterval(timer.current);
+    streamBuf.current = '';
     setStreamText('');
 
     const es = new EventSource(`/api/chat/sessions/${id}/stream`);
@@ -76,7 +80,14 @@ export default function ChatWorkspace({
     es.addEventListener('delta', (e) => {
       try {
         const { d } = JSON.parse(e.data);
-        if (d) setStreamText((t) => t + d);
+        if (!d) return;
+        streamBuf.current += d;
+        // 一帧最多刷新一次
+        if (rafRef.current !== null) return;
+        rafRef.current = requestAnimationFrame(() => {
+          rafRef.current = null;
+          setStreamText(streamBuf.current);
+        });
       } catch {
         /* 忽略坏帧 */
       }
@@ -218,6 +229,7 @@ export default function ChatWorkspace({
     esRef.current?.close();
     esRef.current = null;
     clearInterval(timer.current);
+    streamBuf.current = '';
     setStreamText('');
     setJob(null);
     setBusy(false);

@@ -14,7 +14,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
  *
  * 不产生内容，只是「Redis Stream 的观看者」：
  *   1. 从 Last-Event-ID（或 ?from=）开始回放
- *   2. 没新数据就 250ms 轮询一次
+ *   2. 没新数据就 100ms 轮询一次（越小越顺，代价是 Redis 轮询变密）
  *   3. 看到 done 标记就收尾；任务已结束但没 done（异常）也收尾
  *   4. 顺带每 8 秒发一次心跳注释，防代理掐连接
  *
@@ -86,7 +86,7 @@ export async function GET(request, { params }) {
               idleSince = Date.now();
               send(`: ping\n\n`);
             }
-            await sleep(250);
+            await sleep(100);
           }
           finish();
         } catch (error) {

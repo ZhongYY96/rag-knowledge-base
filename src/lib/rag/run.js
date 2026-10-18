@@ -112,7 +112,28 @@ export async function retrieveDocs({ kbId, question, history = [], chat, embeddi
         ['human', '{input}'],
       ]),
     });
-    return rewriter.invoke({ input: question, chat_history: history$ });
+
+    /*
+     * 改写要调一次 LLM —— 本地模型只有 2.3 tok/s 且 PARALLEL=1，
+     * 一旦模型正忙（另一轮生成/评测），改写会排队几十秒，
+     * 表现就是「卡在检索里直到整轮超时」。
+     * 所以给改写加硬超时：超了就退回原问题，绝不拖垮整轮。
+     */
+    const REWRITE_TIMEOUT_MS = 3000;
+    const started = Date.now();
+    try {
+      const docs = await Promise.race([
+        rewriter.invoke({ input: question, chat_history: history$ }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('rewrite_timeout')), REWRITE_TIMEOUT_MS),
+        ),
+      ]);
+      console.log(`[rag] 查询改写完成 ${Date.now() - started}ms`);
+      return docs;
+    } catch (error) {
+      console.warn(`[rag] 查询改写跳过（${error.message}，${Date.now() - started}ms），用原问题检索`);
+      return scoredRetriever.invoke(question);
+    }
   }
   return scoredRetriever.invoke(question);
 }

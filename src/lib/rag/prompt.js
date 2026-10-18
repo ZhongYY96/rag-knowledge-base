@@ -22,6 +22,8 @@ Hard rules (violating any of these is worse than saying you don't know):
 3. If the question is too vague to answer (for example it refers to "某指标" without naming it), ask the user for the specific name instead of assuming.
 4. Never claim the contexts discuss a topic they do not mention.
 
+Keep it short: lead with the conclusion, then at most 5 bullet points. Aim for 120 Chinese characters; never exceed 250. Do not repeat the question, do not add pleasantries.
+
 Be accurate, professional, and unbiased. Respond in the same language as the question except for code and specific terms.`;
 
 /**
