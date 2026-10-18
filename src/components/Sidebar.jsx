@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Database, Home, Settings, Shield } from 'lucide-react';
+import { Activity, Database, Home, Settings, Shield } from 'lucide-react';
 import LogoutButton from './LogoutButton';
 
 export default function Sidebar() {
@@ -61,6 +61,15 @@ export default function Sidebar() {
             >
               <Database size={20} className="mr-3" />
               <span>知识库</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/observability"
+              className={`flex items-center p-2 rounded-md ${isActive('/observability') ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-100'}`}
+            >
+              <Activity size={20} className="mr-3" />
+              <span>观测</span>
             </Link>
           </li>
           <li>

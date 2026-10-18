@@ -7,6 +7,8 @@ import { appendDelta, markDone, clearStream } from '@/lib/chatStream';
 import { startHeartbeat } from '@/lib/jobHeartbeat';
 import { retrieveDocs, toSource } from '@/lib/rag/run';
 import { historyFor } from '@/lib/rag/followup';
+import { preflight, report } from '@/lib/cost/client';
+import { estimateTokens } from '@/lib/cost/tokens';
 import { ANSWER_SYSTEM_PROMPT, formatContext } from '@/lib/rag/prompt';
 
 /**
@@ -61,6 +63,9 @@ async function runTurnInner({ sessionId, kbId, userId, startedAt }) {
     const history = messages.slice(0, -1).map((m) => ({ role: m.role, content: m.content }));
 
     log('settings ok, retrieving…');
+    const requestId = `req_${startedAt}_${Math.random().toString(36).slice(2, 8)}`;
+    const tRetrieval0 = Date.now();
+
     const docs = await retrieveDocs({
       kbId,
       question: last.content,
@@ -70,6 +75,7 @@ async function runTurnInner({ sessionId, kbId, userId, startedAt }) {
       rag,
     });
 
+    const retrievalMs = Date.now() - tRetrieval0;
     log(`retrieved ${docs.length} docs`);
     let answer = '';
     let sources = [];
@@ -91,6 +97,23 @@ async function runTurnInner({ sessionId, kbId, userId, startedAt }) {
        * 2) 用 fullStream 消费而不是 await result.text：后者在"只有 reasoning 没有正文"
        *    的情况下会一直挂着（实测 60 秒不返回）。
        */
+      /*
+       * 生成前预检：把上下文长度估成 prompt tokens，问服务端还能不能花。
+       * 返回 DOWNGRADE 时切换到建议模型；服务端挂了一律放行（不拖垮问答）。
+       */
+      const contextChars = docs.reduce((n, d) => n + (d.pageContent?.length ?? 0), 0);
+      const verdict = await preflight({
+        tenant_id: kbId,
+        feature: 'chat.answer',
+        model: chat.model,
+        est_prompt_tokens: Math.round(contextChars / 2.5) + 200,
+        max_tokens: Number(chat.maxTokens || 512),
+      });
+      if (verdict.action === 'DOWNGRADE' && verdict.suggested_model) {
+        chat.model = verdict.suggested_model;
+        log(`预算降级 → ${chat.model}`);
+      }
+
       const provider = createChatProvider(chat);
       const system = ANSWER_SYSTEM_PROMPT.replace('{context}', formatContext(docs));
 
@@ -117,8 +140,10 @@ async function runTurnInner({ sessionId, kbId, userId, startedAt }) {
 
       log('streamText start');
       // ★ 显式消费整条流：既不依赖 result.text，也能同时拿到别的 part 类型
+      let ttftMs = null;
       for await (const part of result.fullStream) {
         if (part.type === 'text-delta') {
+          if (ttftMs === null) ttftMs = Date.now() - tRetrieval0 - retrievalMs;
           answer += part.textDelta;
           pending += part.textDelta;
           // 攒够 24 个字符再落一次，避免每个 token 都打一次 Redis
@@ -133,6 +158,49 @@ async function runTurnInner({ sessionId, kbId, userId, startedAt }) {
       log(`stream done, len=${answer.length}`);
       flush();
       await flushing;
+
+      // 上报用量与耗时（不阻塞主流程）
+      try {
+        const usage = (await result.usage) || {};
+        let promptTokens = Math.round(Number(usage.promptTokens) || 0);
+        let completionTokens = Math.round(Number(usage.completionTokens) || 0);
+        let estimated = false;
+
+        // 流式响应常常不带 usage：按实际文本估算，否则成本永远是 0
+        if (promptTokens === 0) {
+          promptTokens = estimateTokens(formatContext(docs)) + estimateTokens(last.content) + 120;
+          estimated = true;
+        }
+        if (completionTokens === 0) {
+          completionTokens = estimateTokens(answer);
+          estimated = true;
+        }
+        report({
+          request_id: requestId,
+          tenant_id: kbId,
+          feature: 'chat.answer',
+          model: chat.model,
+          usage: {
+            // 部分 provider 会返回浮点 token 数，服务端要求整数
+            prompt_tokens: promptTokens,
+            completion_tokens: completionTokens,
+          },
+          timings: {
+            retrieval_ms: Math.round(retrievalMs),
+            ttft_ms: ttftMs === null ? null : Math.round(ttftMs),
+            latency_ms: Math.round(Date.now() - startedAt),
+          },
+          status: 'ok',
+          meta: {
+            top_k: rag.topK,
+            mode: rag.mode,
+            sources: docs.length,
+            usage_estimated: estimated,
+          },
+        });
+      } catch (e) {
+        console.warn('[chat] 用量上报失败:', e.message);
+      }
     }
 
     if (!answer.trim()) {

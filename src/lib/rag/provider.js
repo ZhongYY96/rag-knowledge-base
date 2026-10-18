@@ -17,6 +17,8 @@ export function createChatProvider(chat) {
         try {
           const body = JSON.parse(init.body);
           body.chat_template_kwargs = { ...(body.chat_template_kwargs || {}), enable_thinking: false };
+          // 让服务端在流式响应里带上 usage（不支持的实现会忽略这个字段）
+          if (body.stream) body.stream_options = { ...(body.stream_options || {}), include_usage: true };
           init = { ...init, body: JSON.stringify(body) };
         } catch {
           /* 非 JSON 体原样发 */

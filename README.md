@@ -49,6 +49,29 @@ npm run dev     # 3. 启动 → http://localhost:3000
 
 首次使用：`/register` 注册 → 建知识库 → 上传 PDF/TXT/MD → 进对话页提问。
 
+
+## 调用观测与成本（可选）
+
+`backend/` 是一个独立的 FastAPI 服务，负责**用量计量、成本归因与预算裁决**，计价与预算模型复用
+[The-AI-Cost-Playbook](https://github.com/PacktPublishing/The-AI-Cost-Playbook)（MIT，见 `backend/NOTICE.md`）。
+
+启用：
+
+```bash
+cd backend && pip install -r requirements.txt
+uvicorn app.main:app --port 8100        # 成本服务
+# 主应用 .env.local 加：COST_API_URL=http://127.0.0.1:8100
+npm run dev                             # 访问 /observability
+```
+
+能看到什么：
+
+- 每次问答的 **等效成本**、prompt/completion token、检索耗时、首字延迟、总耗时
+- 按模型、按天聚合；P50/P95 延迟
+- 预算四级动作：`WARN → THROTTLE → DOWNGRADE → BLOCK`，超限时自动降级到小模型
+
+未启用成本服务时，`/observability` 会提示配置方法，问答链路不受影响（预检 fail-open、上报 fire-and-forget）。
+
 ## 功能
 
 | 模块 | 说明 |
@@ -61,6 +84,7 @@ npm run dev     # 3. 启动 → http://localhost:3000
 | 任务 | 后台生成 + 心跳 + 孤儿任务清理 + 手动取消 |
 | 评测 | 三层用例、四项指标、页面 + CLI 双入口、报告落盘 |
 | 审计 | 注册/登录/建库/上传/删库/改配置/评测/越权，全量记录 + 脱敏 |
+| 观测 | 独立成本服务：单次调用成本、耗时拆解、预算分级（可选启用） |
 
 ## 评测结果
 

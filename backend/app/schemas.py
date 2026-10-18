@@ -1,5 +1,5 @@
 """请求/响应模型。"""
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class Usage(BaseModel):
@@ -8,11 +8,32 @@ class Usage(BaseModel):
     cached_tokens: int = 0
     thinking_tokens: int = 0
 
+    # 有些 provider 返回浮点 token 数，四舍五入而不是 422
+    @field_validator("prompt_tokens", "completion_tokens", "cached_tokens", "thinking_tokens", mode="before")
+    @classmethod
+    def _round_int(cls, v):
+        if v is None or v == "":
+            return 0
+        try:
+            return int(round(float(v)))
+        except (TypeError, ValueError):
+            return 0
+
 
 class Timings(BaseModel):
     retrieval_ms: int | None = None
     ttft_ms: int | None = None
     latency_ms: int | None = None
+
+    @field_validator("retrieval_ms", "ttft_ms", "latency_ms", mode="before")
+    @classmethod
+    def _round_opt(cls, v):
+        if v is None:
+            return None
+        try:
+            return int(round(float(v)))
+        except (TypeError, ValueError):
+            return None
 
 
 class CallIn(BaseModel):
