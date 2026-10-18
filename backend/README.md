@@ -100,10 +100,3 @@ fetch(`${COST_API}/v1/calls`, { method: 'POST', body: JSON.stringify({
 | 成本用微美元整数 | 浮点累加会让"已花 0.99"变成 1.0000001，误触发 BLOCK |
 | `request_id` 主键去重 | 重试不重复计费 |
 | 预检 fail-open | 观测不能成为可用性瓶颈 |
-
-## 未实现（有意）
-
-- Redis 原子计数（当前直接查 SQLite，量小够用；接入后用于高并发预检）
-- 日聚合表 `rollups_daily`（数据量大后再加）
-- 语义缓存、模型路由（属于业务层，放 RAG 主应用更合适）
-- 多币种、发票、财务对账
