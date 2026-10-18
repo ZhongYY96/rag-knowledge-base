@@ -70,6 +70,45 @@ npm run migrate:kb   # 旧数据补 ownerId
 
 **混合检索在当前语料下掉召回**，所以默认关闭、只保留开关。详见 `docs/retrieval-strategy.md`。
 
+
+## 备份与恢复
+
+注册数据、知识库、对话记录**全部在 docker volume 里**，不在代码库：
+
+| 操作 | 数据 |
+|---|---|
+| `npm ci` / `npm run dev` / 重装依赖 | ✅ 不受影响 |
+| `docker compose down`（不带 -v） | ✅ volume 保留，数据还在 |
+| `docker compose down -v` / `docker volume prune` | ❌ **全部丢失** |
+| 换机器 / 重新 clone | ❌ 丢失（要手动迁移） |
+
+### 备份
+
+```bash
+npm run backup        # → backups/<时间戳>/{redis-dump.rdb, qdrant-*.snapshot, uploads/}
+```
+
+三样都要备：Redis（用户/库/会话/审计）、Qdrant（向量）、`uploads/`（原始文件，重建索引要用）。
+
+### 恢复
+
+```bash
+# 1. Redis：停服务 → 换 dump.rdb → 清掉 AOF（否则它会覆盖）→ 启动
+docker compose stop redis
+docker run --rm -v rag_redis_data:/data -v "$PWD/backups/<时间戳>":/backup alpine \
+  sh -c "cp /backup/redis-dump.rdb /data/dump.rdb && rm -rf /data/appendonlydir"
+docker compose start redis
+
+# 2. Qdrant：上传快照
+curl -X POST "http://localhost:6333/collections/kb_xxx/snapshots/upload?priority=snapshot" \
+  -F "snapshot=@backups/<时间戳>/qdrant-kb_xxx.snapshot"
+
+# 3. uploads：拷回项目根目录
+cp -r backups/<时间戳>/uploads ./
+```
+
+> `backups/` 已加入 `.gitignore`——里面有用户数据，不要提交。
+
 ## 已知限制
 
 - 上传无大小/类型校验；API Key 明文存 Redis（生产应加密）
