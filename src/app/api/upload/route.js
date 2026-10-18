@@ -49,7 +49,24 @@ export async function POST(request, { params }) {
     const { kb } = await requireKb(knowledgeBaseId, user.id, 'editor');
 
     if (!files || files.length === 0) {
-      return NextResponse.json({ error: 'No files provided' }, { status: 400 });
+      return NextResponse.json({ error: '没有收到文件' }, { status: 400 });
+    }
+
+    /*
+     * 格式与大小白名单。
+     * 之前不校验：DOCX 会被写进库然后解析失败（留下半条脏数据），大文件会直接进内存。
+     * 这里做成"全有或全无"：只要有一个不合规，整批拒绝并说明原因。
+     */
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    const ALLOWED_EXT = /\.(pdf|txt|md|markdown)$/i;
+    const rejected = [];
+    for (const f of files) {
+      if (!f || typeof f === 'string') continue;
+      if (!ALLOWED_EXT.test(f.name || '')) rejected.push(`${f.name}：只支持 PDF / TXT / MD`);
+      else if (f.size > MAX_FILE_SIZE) rejected.push(`${f.name}：超过 10MB`);
+    }
+    if (rejected.length) {
+      return NextResponse.json({ error: rejected.join('；') }, { status: 400 });
     }
 
     /*

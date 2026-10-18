@@ -105,22 +105,21 @@ export default function DocumentUploader({ knowledgeBaseId, onUploadSuccess }) {
           <Upload className="h-10 w-10 text-gray-400" />
           <h3 className="text-lg font-medium text-gray-700">把文件拖到这里，或点击选择</h3>
           <p className="text-sm text-gray-500">
-            or{' '}
+            或{' '}
             <button
               type="button"
               className="text-blue-600 hover:text-blue-800 font-medium"
               onClick={() => fileInputRef.current.click()}
             >
               浏览文件
-            </button>{' '}
-            to upload
+            </button>
           </p>
-          <p className="text-xs text-gray-500 mt-2">支持格式：PDF、DOCX、TXT、MD</p>
+          <p className="text-xs text-gray-500 mt-2">支持格式：PDF、TXT、Markdown</p>
           <input
             ref={fileInputRef}
             type="file"
             multiple
-            accept=".pdf,.docx,.txt,.md,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/markdown"
+            accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown"
             className="hidden"
             onChange={handleFileSelect}
           />

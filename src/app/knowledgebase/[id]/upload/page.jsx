@@ -96,9 +96,9 @@ export default function UploadPage() {
           <Database className="h-6 w-6 text-blue-600" />
           <div>
             <h2 className="font-medium text-blue-900">{knowledgeBase.name}</h2>
-            <p className="text-sm text-blue-700">
-              Uploading to knowledge base: {knowledgeBase.description || '暂无描述'}
-            </p>
+            {knowledgeBase.description && (
+              <p className="text-sm text-blue-700">{knowledgeBase.description}</p>
+            )}
           </div>
         </div>
       )}
@@ -107,7 +107,7 @@ export default function UploadPage() {
         <div className="mb-6">
           <h2 className="mb-1 text-lg font-medium text-gray-900">上传文档</h2>
           <p className="text-sm text-gray-600">
-            Upload documents to add to your knowledge base. Supported formats include PDF, DOCX, TXT, and MD files.
+            支持 PDF、TXT、Markdown；单文件不超过 10MB。
           </p>
         </div>
 

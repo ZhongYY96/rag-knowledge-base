@@ -115,7 +115,7 @@ export default async function Dashboard() {
               </div>
               <h3 className="font-semibold mb-1 text-sm">上传文档</h3>
               <p className="text-gray-600 text-xs">
-                支持 PDF、DOCX、MD、TXT 格式
+                支持 PDF、MD、TXT 格式
               </p>
             </div>
           </Link>

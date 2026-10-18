@@ -48,10 +48,9 @@ export async function processDocument(filePath, fileType, documentId, originalNa
       case 'application/pdf':
         return await processPdf(filePath, documentId, originalName, splitOptions);
 
-      case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
-        const text = await processDocx(filePath);
-        return await splitTextIntoChunks(text, fileType, originalName, documentId, splitOptions);
-      }
+      case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+        // 明确拒绝而不是抛一个看不懂的解析错误（DOCX 是 zip 包，当前没有可靠解析器）
+        throw new Error('暂不支持 DOCX，请另存为 PDF 或 TXT 后再上传');
 
       case 'text/plain':
       case 'text/markdown': {
