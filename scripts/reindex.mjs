@@ -29,6 +29,8 @@ const YES = has('yes');
 
 const STAGE = path.join(ROOT, '.reindex-tmp');
 const MODULES = [
+  ['src/lib/config.js', 'config.mjs'],
+  ['src/lib/jobHeartbeat.js', 'jobheartbeat.mjs'],
   ['src/lib/redis.js', 'redis.mjs'],
   ['src/lib/database.js', 'database.mjs'],
   ['src/lib/settings.js', 'settings.mjs'],

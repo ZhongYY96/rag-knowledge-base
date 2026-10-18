@@ -9,7 +9,7 @@ import { Activity, Download, Play, RefreshCw, Upload, X } from 'lucide-react';
  *
  * 两个按钮，对应两层指标：
  *   快速检查  → 只跑检索层（命中率/Recall），1 秒同步返回
- *   完整评测  → 检索 + 生成（引用正确率/幻觉率/拒答率），异步跑 + 进度条
+ *   完整评测  → 检索 + 生成（引用正确率/拒答率），异步跑 + 进度条
  *
  * 完整评测必须异步：8 条约 2 分钟、50 条约 20 分钟，同步请求必然超时。
  */
@@ -246,7 +246,7 @@ export default function EvalPanel({ knowledgeBaseId, initialReport, goldenCount,
             onClick={fullRun}
             disabled={busy !== ''}
             className="flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700 disabled:opacity-50"
-            title="检索 + 生成，含引用/幻觉/拒答，耗时较长"
+            title="检索 + 生成，含引用正确率/拒答率，耗时较长"
           >
             <Play size={14} className="mr-1.5" />
             {running ? '评测中…' : '完整评测'}
@@ -280,7 +280,7 @@ export default function EvalPanel({ knowledgeBaseId, initialReport, goldenCount,
 
         {!report ? (
           <p className="text-sm text-gray-500">
-            还没有评测数据。「快速检查」只跑检索层（1 秒），「完整评测」会调用模型、给出引用正确率与幻觉率（较慢）。
+            还没有评测数据。「快速检查」只跑检索层（1 秒），「完整评测」会调用模型、给出引用正确率与拒答率（较慢）。
           </p>
         ) : (
           <>
@@ -292,7 +292,6 @@ export default function EvalPanel({ knowledgeBaseId, initialReport, goldenCount,
                   <th className="pb-2 font-medium">命中@K</th>
                   <th className="pb-2 font-medium">Recall</th>
                   <th className="pb-2 font-medium">引用正确</th>
-                  <th className="pb-2 font-medium">幻觉率</th>
                   <th className="pb-2 font-medium">拒答率</th>
                   <th className="pb-2 font-medium">P0</th>
                 </tr>
@@ -305,7 +304,6 @@ export default function EvalPanel({ knowledgeBaseId, initialReport, goldenCount,
                     <td className="py-2">{pct(a.hitAtK)}</td>
                     <td className="py-2">{pct(a.recall)}</td>
                     <td className="py-2">{pct(a.citationOk)}</td>
-                    <td className="py-2">{pct(a.h1)}</td>
                     <td className="py-2">{pct(a.refusal)}</td>
                     <td className={`py-2 ${a.p0 ? 'font-medium text-red-600' : 'text-gray-400'}`}>{a.p0}</td>
                   </tr>
@@ -316,7 +314,7 @@ export default function EvalPanel({ knowledgeBaseId, initialReport, goldenCount,
             <p className="mt-3 text-xs text-gray-400">
               {isFull
                 ? '本次为全链路评测（含生成）。'
-                : '本次只跑了检索层，所以引用正确 / 幻觉率 / 拒答率显示为 —。点「完整评测」补齐这三项。'}
+                : '本次只跑了检索层，所以引用正确 / 拒答率显示为 —。点「完整评测」补齐这两项。'}
             </p>
 
             {failures.length > 0 && (

@@ -83,7 +83,7 @@ export function judgeClaim(claim, citedChunks) {
 
 /**
  * 生成层判定。返回的字段直接拼进 report 的一行。
- * 拒答 / 空回答不参与幻觉率（否则指标被污染）。
+ * 拒答 / 空回答不参与引用正确率统计（否则指标被污染）。
  */
 export function judgeAnswer({ answer, docs, shouldRefuse, mustContain }) {
   const claims = splitClaims(answer);
@@ -137,7 +137,6 @@ export function judgeAnswer({ answer, docs, shouldRefuse, mustContain }) {
     numberMismatch,
     empty,
     refused,
-    h1: refused || empty || claims.length === 0 ? null : unsupported / claims.length,
     citationOk: totalCitations ? supportedCitations / totalCitations : null,
     correctRefusal: shouldRefuse ? refused : null,
     falseRefusal: shouldRefuse === false ? refused : null,
@@ -183,7 +182,6 @@ export function summarize(results) {
     const withGold = rows.filter((r) => r.hitAtK != null);
     const answerable = rows.filter((r) => r.shouldRefuse !== true);
     const unanswerable = rows.filter((r) => r.shouldRefuse === true);
-    const withH1 = rows.filter((r) => r.h1 != null);
     const withCite = rows.filter((r) => r.citationOk != null);
     // 只跑检索层时没有生成结果，拒答相关指标应为「无数据」而不是 0%
     const hasRefusalData = rows.some((r) => r.refused !== undefined);
@@ -193,7 +191,6 @@ export function summarize(results) {
       hitAtK: withGold.length ? withGold.filter((r) => r.hitAtK).length / withGold.length : null,
       recall: withGold.length ? avg(withGold.map((r) => r.recall)) : null,
       citationOk: withCite.length ? avg(withCite.map((r) => r.citationOk)) : null,
-      h1: withH1.length ? avg(withH1.map((r) => r.h1)) : null,
       refusal:
         hasRefusalData && unanswerable.length
           ? unanswerable.filter((r) => r.correctRefusal).length / unanswerable.length

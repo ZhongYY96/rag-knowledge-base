@@ -34,6 +34,8 @@ const ONLY_TIER = arg('tier', null);
 
 const STAGE = path.join(ROOT, '.eval-tmp');
 const MODULES = [
+  ['src/lib/config.js', 'config.mjs'],
+  ['src/lib/jobHeartbeat.js', 'jobheartbeat.mjs'],
   ['src/lib/redis.js', 'redis.mjs'],
   ['src/lib/database.js', 'database.mjs'],
   ['src/lib/settings.js', 'settings.mjs'],
@@ -186,12 +188,12 @@ async function main() {
   console.log('\n' + '─'.repeat(78));
   console.log(
     pad('档位', 14) + pad('样本', 6) + pad('命中@K', 9) + pad('Recall', 9) + pad('引用正确', 10) +
-      pad('幻觉H1', 9) + pad('拒答率', 9) + pad('误拒率', 9) + pad('P0', 4),
+      pad('拒答率', 9) + pad('误拒率', 9) + pad('P0', 4),
   );
   for (const [t, a] of Object.entries(tiers)) {
     console.log(
       pad(t, 14) + pad(a.n, 6) + pad(pct(a.hitAtK), 9) + pad(pct(a.recall), 9) +
-        pad(pct(a.citationOk), 10) + pad(pct(a.h1), 9) + pad(pct(a.refusal), 9) +
+        pad(pct(a.citationOk), 10) + pad(pct(a.refusal), 9) +
         pad(pct(a.falseRefusal), 9) + pad(a.p0, 4),
     );
   }
