@@ -135,12 +135,6 @@ npm run backup    # → backups/<时间戳>/{redis-dump.rdb, qdrant-*.snapshot, 
 
 数据在 docker volume 里：`docker compose down` 不影响，`down -v` 会清空。恢复步骤见脚本输出与 `docs/`。
 
-## 规划中
-
-- Rerank 精排（语料上量后引入，评测口径已就绪）
-- 任务队列化（替换 `after()`，支持跨进程重启续跑）
-- 更多格式：DOCX、扫描件 OCR
-
 ## 常见问题
 
 **页面没有样式 / 接口 500 / 报 `MODULE_NOT_FOUND .next/...manifest.json`**
